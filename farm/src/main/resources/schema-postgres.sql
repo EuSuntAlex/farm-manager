@@ -51,3 +51,45 @@ COMMENT ON COLUMN pages.jurnal.day IS 'Ziua lunii';
 COMMENT ON COLUMN pages.jurnal.month IS 'Luna anului';
 COMMENT ON COLUMN pages.jurnal.year IS 'Anul';
 COMMENT ON COLUMN pages.jurnal.user_id IS 'ID-ul utilizatorului care a creat înregistrarea';
+
+
+
+
+-- Tabel tipuri magazie
+CREATE TABLE IF NOT EXISTS pages.tip_magazie(
+                                                id                 BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+                                                cod                VARCHAR(50) NOT NULL,
+                                                denumire           VARCHAR(255) NOT NULL,
+                                                unitate_masura     VARCHAR(50) NOT NULL,
+                                                user_id            INTEGER NOT NULL,
+
+                                                CONSTRAINT unique_tip_per_user UNIQUE (cod, user_id)
+);
+
+-- Tabel mișcări magazie (fără nrDocument)
+CREATE TABLE IF NOT EXISTS pages.magazie(
+                                            id                 BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+                                            tip_magazie_id     BIGINT NOT NULL,
+                                            user_id            INTEGER NOT NULL,
+                                            furnizor           VARCHAR(255),                    -- OPȚIONAL
+                                            day                INTEGER NOT NULL,
+                                            month              INTEGER NOT NULL,
+                                            year               INTEGER NOT NULL,
+                                            intrari            DECIMAL(10,2) DEFAULT 0,
+                                            iesiri             DECIMAL(10,2) DEFAULT 0,
+                                            stoc_final         DECIMAL(10,2) NOT NULL,
+
+                                            CONSTRAINT fk_tip_magazie
+                                                FOREIGN KEY (tip_magazie_id)
+                                                    REFERENCES pages.tip_magazie(id)
+                                                    ON DELETE RESTRICT,
+
+                                            CONSTRAINT check_intrari CHECK (intrari >= 0),
+                                            CONSTRAINT check_iesiri CHECK (iesiri >= 0),
+                                            CONSTRAINT check_stoc_final CHECK (stoc_final >= 0)
+);
+
+-- Index-uri
+CREATE INDEX IF NOT EXISTS idx_miscari_tip ON pages.magazie(tip_magazie_id);
+CREATE INDEX IF NOT EXISTS idx_miscari_data ON pages.magazie(year, month, day);
+CREATE INDEX IF NOT EXISTS idx_miscari_user ON pages.magazie(user_id);
