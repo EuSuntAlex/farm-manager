@@ -1,0 +1,78 @@
+.tabel-container {
+  overflow-x: auto;
+  margin: 20px 0;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.jurnal-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  font-size: 14px;
+  min-width: 1000px;
+}
+
+.jurnal-table th {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 12px;
+  font-weight: 500;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.jurnal-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.jurnal-table tr:hover {
+  background: #f7fafc;
+}
+
+.jurnal-table tr.new-entry {
+  background: #f0f9ff;
+}
+
+.jurnal-table tr.new-entry:hover {
+  background: #e6f2ff;
+}
+
+.day-cell {
+  font-weight: 600;
+  color: #2d3748;
+  width: 60px;
+}
+
+.total-cell {
+  font-weight: 600;
+  color: #48bb78;
+}
+
+.jurnal-table input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.jurnal-table input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.jurnal-table input[type="text"] {
+  min-width: 120px;
+}
+
+.no-data {
+  text-align: center;
+  padding: 40px;
+  background: white;
+  border-radius: 12px;
+  color: #718096;
+}

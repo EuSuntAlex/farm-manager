@@ -1,0 +1,145 @@
+.menu {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  width: 250px;
+  height: fit-content;
+  position: sticky;
+  top: 20px;
+  overflow: hidden;
+  border: 1px solid #eef2f6;
+}
+
+.menu-logo {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+.menu-logo h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.menu-items {
+  list-style: none;
+  padding: 15px;
+  margin: 0;
+}
+
+.menu-items li {
+  margin-bottom: 5px;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.menu-items li a {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  color: #4a5568;
+  text-decoration: none;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.menu-items li:hover {
+  background: #f7fafc;
+}
+
+.menu-items li.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.menu-items li.active a {
+  color: white;
+}
+
+.menu-icon {
+  margin-right: 12px;
+  font-size: 18px;
+  width: 24px;
+  text-align: center;
+}
+
+.menu-label {
+  font-size: 15px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .menu {
+    width: 100%;
+    position: static;
+    margin-bottom: 20px;
+  }
+  
+  .menu-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  
+  .menu-items li {
+    flex: 1;
+    min-width: 100px;
+  }
+  
+  .menu-items li a {
+    justify-content: center;
+  }
+  
+  .menu-icon {
+    margin-right: 5px;
+  }
+}
+/* Stiluri pentru submeniu */
+.menu-item-header {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  color: #4a5568;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.menu-item-header:hover {
+  background: #f7fafc;
+}
+
+.has-submenu.open > .menu-item-header {
+  background: #f7fafc;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.submenu-arrow {
+  margin-left: auto;
+  font-size: 12px;
+  color: #a0aec0;
+}
+
+.submenu {
+  list-style: none;
+  padding: 5px 0 5px 15px;
+  margin: 0;
+  background: #f9f9fc;
+  border-radius: 0 0 8px 8px;
+}
+
+.submenu li {
+  margin-bottom: 2px;
+}
+
+.submenu li a {
+  padding: 10px 15px;
+  font-size: 14px;
+}
+
+.submenu .menu-icon {
+  font-size: 14px;
+}

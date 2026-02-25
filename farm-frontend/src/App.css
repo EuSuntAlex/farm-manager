@@ -1,0 +1,59 @@
+/* App.css - Varianta simplificată */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #1f2937, #111827);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
+
+#root {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  height: 100vh;
+  max-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ascundem stilurile default Vite */
+.logo, .read-the-docs {
+  display: none;
+}
+
+/* Orice alte stiluri care ar putea interfera */
+.card {
+  display: none;
+}
+.app-layout {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.content {
+  flex: 1;
+  min-width: 0; /* Previne depășirea */
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .app-layout {
+    flex-direction: column;
+    padding: 10px;
+    gap: 10px;
+  }
+}

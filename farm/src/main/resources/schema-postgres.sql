@@ -1,7 +1,7 @@
 CREATE SCHEMA IF NOT EXISTS pages;
 
 CREATE TABLE IF NOT EXISTS pages.jurnal(
-                                           id                          BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+                                           jurnalId                          BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
                                            nr_animale                  INTEGER NOT NULL DEFAULT 0,
                                            mulsoare1                   INTEGER NOT NULL DEFAULT 0,
                                            mulsoare2                   INTEGER NOT NULL DEFAULT 0,
@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS pages.jurnal(
     -- Constrângeri de validare
                                            CONSTRAINT check_month CHECK (month >= 1 AND month <= 12),
                                            CONSTRAINT check_day CHECK (day >= 1 AND day <= 31),
-                                           CONSTRAINT check_year CHECK (year >= 2020),
+                                           CONSTRAINT check_year CHECK (year >= 2000),
                                            CONSTRAINT check_nr_animale CHECK (nr_animale >= 0),
                                            CONSTRAINT check_mulsoare1 CHECK (mulsoare1 >= 0),
                                            CONSTRAINT check_mulsoare2 CHECK (mulsoare2 >= 0),
@@ -31,10 +31,10 @@ CREATE TABLE IF NOT EXISTS pages.jurnal(
 );
 
 -- Index pentru căutări rapide după dată și user
-CREATE INDEX IF NOT EXISTS idx_jurnal_data_user ON pages.jurnal(year, month, day, user_id);
+--CREATE INDEX IF NOT EXISTS idx_jurnal_data_user ON pages.jurnal(year, month, day, user_id);
 
 -- Index pentru căutări după user
-CREATE INDEX IF NOT EXISTS idx_jurnal_user ON pages.jurnal(user_id);
+--CREATE INDEX IF NOT EXISTS idx_jurnal_user ON pages.jurnal(user_id);
 
 
 -- Comentarii pentru documentare
@@ -90,6 +90,49 @@ CREATE TABLE IF NOT EXISTS pages.magazie(
 );
 
 -- Index-uri
-CREATE INDEX IF NOT EXISTS idx_miscari_tip ON pages.magazie(tip_magazie_id);
-CREATE INDEX IF NOT EXISTS idx_miscari_data ON pages.magazie(year, month, day);
-CREATE INDEX IF NOT EXISTS idx_miscari_user ON pages.magazie(user_id);
+--CREATE INDEX IF NOT EXISTS idx_miscari_tip ON pages.magazie(tip_magazie_id);
+--CREATE INDEX IF NOT EXISTS idx_miscari_data ON pages.magazie(year, month, day);
+--CREATE INDEX IF NOT EXISTS idx_miscari_user ON pages.magazie(user_id);
+
+-- Creează tabela cu nume de coloane standard (snake_case)
+CREATE TABLE IF NOT EXISTS pages.centralizator (
+                                                   id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+                                                   tip_magazie_id BIGINT NOT NULL,               -- FK către tip_magazie
+                                                   stoc_initial INTEGER NOT NULL DEFAULT 0,
+                                                   intrari INTEGER NOT NULL DEFAULT 0,
+                                                   vaci_lapte INTEGER NOT NULL DEFAULT 0,
+                                                   vaci_gestante INTEGER NOT NULL DEFAULT 0,
+                                                   junici_gestante INTEGER NOT NULL DEFAULT 0,
+                                                   alte_vaci INTEGER NOT NULL DEFAULT 0,
+                                                   vitele_montate INTEGER NOT NULL DEFAULT 0,
+                                                   junici INTEGER NOT NULL DEFAULT 0,
+                                                   vitele_6_12_luni INTEGER NOT NULL DEFAULT 0,
+                                                   vitele_3_6_luni INTEGER NOT NULL DEFAULT 0,
+                                                   vitele_0_3_luni INTEGER NOT NULL DEFAULT 0,
+                                                   taurasi INTEGER NOT NULL DEFAULT 0,
+                                                   observatii TEXT,
+                                                   user_id INTEGER NOT NULL,
+                                                   month INTEGER NOT NULL,
+                                                   year INTEGER NOT NULL,
+                                                   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                                                   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+
+    -- unicitate: o singură intrare pe tip/lună/user
+                                                   CONSTRAINT unique_tip_luna UNIQUE (user_id, tip_magazie_id, year, month),
+
+    -- FK
+                                                   CONSTRAINT fk_tip_magazie
+                                                       FOREIGN KEY (tip_magazie_id)
+                                                           REFERENCES pages.tip_magazie(id)
+                                                           ON DELETE CASCADE,
+
+    -- validări
+                                                   CONSTRAINT valid_month CHECK (month >= 1 AND month <= 12),
+                                                   CONSTRAINT valid_year CHECK (year >= 2000)
+);
+
+-- Indexuri pentru performanță
+CREATE INDEX IF NOT EXISTS idx_centralizator_user ON pages.centralizator(user_id);
+CREATE INDEX IF NOT EXISTS idx_centralizator_tip ON pages.centralizator(tip_magazie_id);
+CREATE INDEX IF NOT EXISTS idx_centralizator_data ON pages.centralizator(year, month);
+CREATE INDEX IF NOT EXISTS idx_centralizator_user_data ON pages.centralizator(user_id, year, month);

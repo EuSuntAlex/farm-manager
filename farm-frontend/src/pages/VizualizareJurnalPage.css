@@ -1,0 +1,348 @@
+.vizualizare-jurnal-page {
+  padding: 20px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 24px;
+  color: #2d3748;
+  font-weight: 600;
+}
+
+.header-actions {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.month-selector {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.month-select {
+  padding: 10px 15px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 15px;
+  background: white;
+  min-width: 150px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.month-select:hover {
+  border-color: #cbd5e0;
+}
+
+.month-select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.year-input {
+  padding: 10px 15px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 15px;
+  width: 100px;
+  transition: all 0.2s;
+}
+
+.year-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.current-month-btn {
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.current-month-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+}
+
+.loading {
+  text-align: center;
+  padding: 60px;
+  font-size: 18px;
+  color: #718096;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.message {
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.message.success {
+  background: #c6f6d5;
+  color: #22543d;
+  border: 1px solid #9ae6b4;
+}
+
+.message.error {
+  background: #fed7d7;
+  color: #742a2a;
+  border: 1px solid #fc8181;
+}
+
+.table-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.export-btn {
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.export-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+}
+
+.table-container {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  margin-bottom: 25px;
+}
+
+.jurnal-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  min-width: 1200px;
+}
+
+.jurnal-table th {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 15px 12px;
+  font-weight: 500;
+  text-align: left;
+  white-space: nowrap;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.jurnal-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e2e8f0;
+  vertical-align: middle;
+}
+
+.jurnal-table tr:hover {
+  background: #f7fafc;
+}
+
+.jurnal-table tr.new-entry {
+  background: #f0f9ff;
+}
+
+.jurnal-table tr.new-entry:hover {
+  background: #e6f2ff;
+}
+
+.day-cell {
+  font-weight: 600;
+  color: #2d3748;
+  width: 50px;
+  text-align: center;
+}
+
+.date-cell {
+  color: #4a5568;
+  white-space: nowrap;
+}
+
+.total-cell {
+  font-weight: 600;
+  color: #48bb78;
+  text-align: right;
+}
+
+.jurnal-table input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 13px;
+  transition: all 0.2s;
+  background: white;
+}
+
+.jurnal-table input:hover {
+  border-color: #cbd5e0;
+}
+
+.jurnal-table input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.jurnal-table input[type="number"] {
+  text-align: right;
+}
+
+.save-actions {
+  margin-top: 25px;
+  text-align: center;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.save-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 14px 40px;
+  border-radius: 40px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  min-width: 280px;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.save-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.save-button:disabled {
+  background: #cbd5e0;
+  cursor: not-allowed;
+  box-shadow: none;
+  opacity: 0.7;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .vizualizare-jurnal-page {
+    padding: 15px;
+  }
+  
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .page-header h1 {
+    font-size: 20px;
+  }
+  
+  .header-actions {
+    width: 100%;
+  }
+  
+  .month-selector {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .month-select,
+  .year-input,
+  .current-month-btn {
+    width: 100%;
+  }
+  
+  .year-input {
+    width: 100%;
+  }
+  
+  .table-actions {
+    justify-content: center;
+  }
+  
+  .export-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .save-button {
+    width: 100%;
+    min-width: auto;
+    padding: 12px 20px;
+  }
+}
+
+/* Stiluri pentru input-urile cu text */
+.jurnal-table input[type="text"] {
+  min-width: 120px;
+}
+
+/* Stiluri pentru celulele cu numere */
+.jurnal-table td:not(:first-child):not(:nth-child(2)) input {
+  text-align: right;
+}
+
+/* Stiluri pentru antetul tabelului pe mobil */
+@media (max-width: 480px) {
+  .jurnal-table th {
+    font-size: 12px;
+    padding: 12px 8px;
+  }
+  
+  .jurnal-table td {
+    padding: 8px;
+  }
+  
+  .jurnal-table input {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+}
