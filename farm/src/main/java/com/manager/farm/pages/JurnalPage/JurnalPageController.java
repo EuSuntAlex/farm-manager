@@ -14,7 +14,8 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/jurnal")
-@CrossOrigin(origins = "http://localhost:5173")
+//@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "*")
 public class JurnalPageController {
 
     private final JurnalPageRepository jurnalPageRepository;

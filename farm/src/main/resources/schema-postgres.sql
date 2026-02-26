@@ -136,3 +136,29 @@ CREATE INDEX IF NOT EXISTS idx_centralizator_user ON pages.centralizator(user_id
 CREATE INDEX IF NOT EXISTS idx_centralizator_tip ON pages.centralizator(tip_magazie_id);
 CREATE INDEX IF NOT EXISTS idx_centralizator_data ON pages.centralizator(year, month);
 CREATE INDEX IF NOT EXISTS idx_centralizator_user_data ON pages.centralizator(user_id, year, month);
+
+
+CREATE TABLE IF NOT EXISTS pages.tipeveniment (
+                                                  id BIGSERIAL PRIMARY KEY,
+                                                  nume VARCHAR(255) NOT NULL,
+                                                  duration INTEGER NOT NULL,
+                                                  user_id INTEGER NOT NULL
+);
+
+-- Tabela pentru evenimente
+CREATE TABLE IF NOT EXISTS pages.eveniment (
+                                               id BIGSERIAL PRIMARY KEY,
+                                               tip_eveniment_id INTEGER NOT NULL,
+                                               title VARCHAR(255) NOT NULL,
+                                               date_start TIMESTAMP NOT NULL,
+                                               date_end TIMESTAMP,
+                                               user_id INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS pages.ingredient (
+                                                id BIGSERIAL PRIMARY KEY,
+                                                name VARCHAR(255) NOT NULL,
+                                                unitate_masura VARCHAR(50) NOT NULL,
+                                                price INTEGER NOT NULL,
+                                                user_id INTEGER NOT NULL
+);

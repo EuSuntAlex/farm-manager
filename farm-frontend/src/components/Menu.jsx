@@ -7,7 +7,9 @@ export default function Menu() {
   const [openSubmenu, setOpenSubmenu] = useState({
     jurnal: false,
     magazie: false,
-    centralizator: false
+    centralizator: false,
+    evenimente: false,
+    resurse: false // Adăugat pentru Ingrediente și Rețete
   });
 
   const toggleSubmenu = (menu) => {
@@ -79,6 +81,56 @@ export default function Menu() {
                 <Link to="/magazie/miscare-vizualizare">
                   <span className="menu-icon">📊</span>
                   <span className="menu-label">Vizualizare/Edit Mișcări</span>
+                </Link>
+              </li>
+            </ul>
+          )}
+        </li>
+
+        {/* Evenimente Section */}
+        <li className={`has-submenu ${openSubmenu.evenimente ? "open" : ""}`}>
+          <div className="menu-item-header" onClick={() => toggleSubmenu("evenimente")}>
+            <span className="menu-icon">📅</span>
+            <span className="menu-label">Evenimente</span>
+            <span className="submenu-arrow">{openSubmenu.evenimente ? "▼" : "▶"}</span>
+          </div>
+          {openSubmenu.evenimente && (
+            <ul className="submenu">
+              <li className={location.pathname === "/tip-eveniment" ? "active" : ""}>
+                <Link to="/tip-eveniment">
+                  <span className="menu-icon">🏷️</span>
+                  <span className="menu-label">Tip Eveniment</span>
+                </Link>
+              </li>
+              <li className={location.pathname === "/evenimente" ? "active" : ""}>
+                <Link to="/evenimente">
+                  <span className="menu-icon">📋</span>
+                  <span className="menu-label">Evenimente</span>
+                </Link>
+              </li>
+            </ul>
+          )}
+        </li>
+
+        {/* NOU - Resurse Section (Ingrediente și Rețete) */}
+        <li className={`has-submenu ${openSubmenu.resurse ? "open" : ""}`}>
+          <div className="menu-item-header" onClick={() => toggleSubmenu("resurse")}>
+            <span className="menu-icon">🌾</span>
+            <span className="menu-label">Resurse</span>
+            <span className="submenu-arrow">{openSubmenu.resurse ? "▼" : "▶"}</span>
+          </div>
+          {openSubmenu.resurse && (
+            <ul className="submenu">
+              <li className={location.pathname === "/ingrediente" ? "active" : ""}>
+                <Link to="/ingrediente">
+                  <span className="menu-icon">🥕</span>
+                  <span className="menu-label">Ingrediente</span>
+                </Link>
+              </li>
+              <li className={location.pathname === "/retete" ? "active" : ""}>
+                <Link to="/retete">
+                  <span className="menu-icon">📖</span>
+                  <span className="menu-label">Rețete</span>
                 </Link>
               </li>
             </ul>

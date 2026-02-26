@@ -10,6 +10,10 @@ import AdaugareCentralizator from "./pages/centralizator/AdaugareCentralizator";
 import VizualizareCentralizator from "./pages/centralizator/VizualizareCentralizator";
 import ClientiPage from "./pages/ClientiPage";
 import StatisticiPage from "./pages/StatisticiPage";
+import TipEvenimentPage from './components/TipEvenimentPage';
+import EvenimentePage from './components/EvenimentePage';
+import IngredientePage from "./components/IngredientePage";
+
 import "./App.css";
 
 function App() {
@@ -37,6 +41,9 @@ function App() {
             <Route path="/clienti" element={<ClientiPage />} />
             <Route path="/statistici" element={<StatisticiPage />} />
             <Route path="/" element={<JurnalForm />} />
+            <Route path="/tip-eveniment" element={<TipEvenimentPage />} />
+            <Route path="/evenimente" element={<EvenimentePage />} />
+            <Route path="/ingrediente" element={<IngredientePage />} />
           </Routes>
         </div>
       </div>
