@@ -1,4 +1,4 @@
-package com.manager.farm.pages.bovinePage.commandDto;
+package com.manager.farm.pages.bovinePage.queryDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,25 +11,25 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Getter
 @Setter
-public class BovinaEditDto {
-
+public class BovinaResponseDto {
+    private Long id;
+    private Integer userId;
     private LocalDate dateBirth;
-
     private Boolean isMale;
-
+    private String sex;  // "Mascul" sau "Femelă"
     private Double greutate;  // NOU: greutatea în kg
-
     private Integer nrFatari;
-
     private Integer productieLapte;
-
     private String nota;
-
     private String location;
-
     private Boolean isObserved;
+    private String status;  // "Tanăr", "Adult", "Bătrân" (calculat din vârstă)
 
-    private Long retetaId;
-
+    // Informații despre rasă
     private Long tipBovinaId;
+    private String tipBovinaNume;
+
+    // Informații despre rețetă
+    private Long retetaId;
+    private String retetaNume;
 }

@@ -13,6 +13,9 @@ import StatisticiPage from "./pages/StatisticiPage";
 import TipEvenimentPage from './components/TipEvenimentPage';
 import EvenimentePage from './components/EvenimentePage';
 import IngredientePage from "./components/IngredientePage";
+import RetetePage from "./components/RetetePage";
+import BovinePage from "./components/bovine/BovinePage";
+import RasePage from "./components/RasePage";
 
 import "./App.css";
 
@@ -37,13 +40,26 @@ function App() {
             <Route path="/centralizator/adaugare" element={<AdaugareCentralizator />} />
             <Route path="/centralizator/vizualizare" element={<VizualizareCentralizator />} />
 
-            {/* Other routes */}
-            <Route path="/clienti" element={<ClientiPage />} />
-            <Route path="/statistici" element={<StatisticiPage />} />
-            <Route path="/" element={<JurnalForm />} />
+            {/* Evenimente routes */}
             <Route path="/tip-eveniment" element={<TipEvenimentPage />} />
             <Route path="/evenimente" element={<EvenimentePage />} />
+
+            {/* Resurse routes */}
             <Route path="/ingrediente" element={<IngredientePage />} />
+            <Route path="/retete" element={<RetetePage />} />
+
+            {/* BOVINE routes - DOAR listă (adaugare prin buton în pagină) */}
+            <Route path="/bovine" element={<BovinePage />} />
+
+            {/* RASE routes - DOAR listă (adaugare prin buton în pagină) */}
+            <Route path="/rase" element={<RasePage />} />
+
+            {/* Alte routes */}
+            <Route path="/clienti" element={<ClientiPage />} />
+            <Route path="/statistici" element={<StatisticiPage />} />
+
+            {/* Redirect default */}
+            <Route path="/" element={<JurnalForm />} />
           </Routes>
         </div>
       </div>

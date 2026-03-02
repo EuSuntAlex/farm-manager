@@ -162,3 +162,104 @@ CREATE TABLE IF NOT EXISTS pages.ingredient (
                                                 price INTEGER NOT NULL,
                                                 user_id INTEGER NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS pages.reteta (
+                                            id BIGSERIAL PRIMARY KEY,
+                                            nume VARCHAR(255) NOT NULL,
+                                            descriere TEXT,
+                                            data_creare TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                            user_id INTEGER NOT NULL
+);
+
+-- =============================================
+-- TABEL: reteta_ingredient (legătură între rețete și ingrediente)
+-- =============================================
+CREATE TABLE IF NOT EXISTS pages.reteta_ingredient (
+                                                       id BIGSERIAL PRIMARY KEY,
+                                                       reteta_id INTEGER NOT NULL,
+                                                       ingredient_id INTEGER NOT NULL,
+                                                       cantitate DECIMAL(10, 2) NOT NULL,
+
+    -- Constraint pentru chei străine
+                                                       CONSTRAINT fk_reteta_ingredient_reteta
+                                                           FOREIGN KEY (reteta_id)
+                                                               REFERENCES pages.reteta(id)
+                                                               ON DELETE CASCADE,
+
+                                                       CONSTRAINT fk_reteta_ingredient_ingredient
+                                                           FOREIGN KEY (ingredient_id)
+                                                               REFERENCES pages.ingredient(id)
+                                                               ON DELETE CASCADE,
+
+    -- Un ingredient nu poate apărea de două ori în aceeași rețetă
+                                                       CONSTRAINT unique_reteta_ingredient
+                                                           UNIQUE(reteta_id, ingredient_id)
+);
+
+-- Tabela pentru rase (tipBovina)
+CREATE TABLE IF NOT EXISTS pages.tipbovina (
+                                               id BIGSERIAL PRIMARY KEY,
+                                               name VARCHAR(255) NOT NULL,
+                                               default_reteta_id INTEGER,
+                                               user_id INTEGER NOT NULL
+);
+
+-- Tabela pentru bovine
+CREATE TABLE IF NOT EXISTS pages.bovina (
+                                            id BIGSERIAL PRIMARY KEY,
+                                            user_id INTEGER NOT NULL,
+                                            date_birth DATE NOT NULL,
+                                            is_male BOOLEAN NOT NULL,
+                                            nr_fatari INTEGER DEFAULT 0,
+                                            productie_lapte INTEGER,
+                                            nota TEXT,
+                                            location VARCHAR(255),
+                                            is_observed BOOLEAN DEFAULT FALSE,
+                                            reteta_id INTEGER,
+                                            tip_bovina_id INTEGER NOT NULL
+);
+
+-- Indexi pentru performanță
+CREATE INDEX IF NOT EXISTS idx_tipbovina_user_id ON pages.tipbovina(user_id);
+CREATE INDEX IF NOT EXISTS idx_tipbovina_name ON pages.tipbovina(name);
+
+CREATE INDEX IF NOT EXISTS idx_bovina_user_id ON pages.bovina(user_id);
+CREATE INDEX IF NOT EXISTS idx_bovina_tip_bovina_id ON pages.bovina(tip_bovina_id);
+CREATE INDEX IF NOT EXISTS idx_bovina_reteta_id ON pages.bovina(reteta_id);
+CREATE INDEX IF NOT EXISTS idx_bovina_is_male ON pages.bovina(is_male);
+
+-- Modifică tabela eveniment să includă bovina_id (dacă nu ai făcut-o deja)
+ALTER TABLE pages.eveniment ADD COLUMN IF NOT EXISTS bovina_id INTEGER;
+CREATE INDEX IF NOT EXISTS idx_eveniment_bovina_id ON pages.eveniment(bovina_id);
+ALTER TABLE pages.bovina
+    ADD COLUMN IF NOT EXISTS greutate DOUBLE PRECISION;
+
+-- Tabela pentru istoricul greutăților
+CREATE TABLE IF NOT EXISTS pages.bovina_greutate_istorice (
+                                                              id BIGSERIAL PRIMARY KEY,
+                                                              bovina_id INTEGER NOT NULL,
+                                                              greutate DOUBLE PRECISION NOT NULL,
+                                                              data_masuratoare DATE NOT NULL,
+                                                              nota TEXT,
+                                                              created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+                                                              CONSTRAINT fk_bovina_greutate_bovina
+                                                                  FOREIGN KEY (bovina_id)
+                                                                      REFERENCES pages.bovina(id)
+                                                                      ON DELETE CASCADE
+);
+
+-- Indexi pentru performanță
+CREATE INDEX IF NOT EXISTS idx_bovina_user_id ON pages.bovina(user_id);
+CREATE INDEX IF NOT EXISTS idx_bovina_tip_bovina_id ON pages.bovina(tip_bovina_id);
+CREATE INDEX IF NOT EXISTS idx_bovina_reteta_id ON pages.bovina(reteta_id);
+
+CREATE INDEX IF NOT EXISTS idx_bovina_greutate_bovina_id
+    ON pages.bovina_greutate_istorice(bovina_id);
+CREATE INDEX IF NOT EXISTS idx_bovina_greutate_data
+    ON pages.bovina_greutate_istorice(data_masuratoare);
+
+-- Indexi pentru tipbovina (din modelul tău)
+CREATE INDEX IF NOT EXISTS idx_tipbovina_user_id ON pages.tipbovina(user_id);
+CREATE INDEX IF NOT EXISTS idx_tipbovina_name ON pages.tipbovina(name);
+

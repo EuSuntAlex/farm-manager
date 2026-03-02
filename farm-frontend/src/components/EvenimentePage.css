@@ -287,3 +287,103 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     color: #333;
     cursor: pointer;
 }
+
+/* Stiluri pentru select-urile de timp */
+.time-selects {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.time-select {
+    flex: 1;
+    min-width: 70px;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    background: white;
+}
+
+.time-select:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+.time-separator {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #666;
+}
+
+/* Stiluri pentru date-selects (dacă nu există) */
+.date-selects {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.date-select {
+    flex: 1;
+    min-width: 80px;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    background: white;
+}
+
+.date-select:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+.btn-today {
+    background: #2196F3;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: background 0.2s;
+}
+
+.btn-today:hover {
+    background: #1976D2;
+}
+
+.btn-instant {
+    background: #ff9800;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.btn-instant:hover {
+    background: #f57c00;
+}
+
+.info-message {
+    background: #e3f2fd;
+    border: 1px solid #2196F3;
+    border-radius: 4px;
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    color: #0d47a1;
+}
+
+.info-message p {
+    margin: 0;
+    font-size: 14px;
+}

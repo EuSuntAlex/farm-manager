@@ -11,7 +11,10 @@ const IngredientePage = () => {
     const [showAddForm, setShowAddForm] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const [currentIngredient, setCurrentIngredient] = useState(null);
-
+    const IngredientePage = ({ initialShowForm = false }) => {
+        const [showAddForm, setShowAddForm] = useState(initialShowForm);
+        // restul codului rămâne la fel
+    };
     // Form state
     const [formData, setFormData] = useState({
         name: '',

@@ -33,10 +33,15 @@ public class RetetaService {
     }
 
     @Transactional
-    public Reteta createReteta(RetetaAddDto dto) {
+    public RetetaResponseDto createReteta(RetetaAddDto dto) {
         // Verifică dacă există deja o rețetă cu același nume
         if (retetaRepository.existsByUserIdAndNume(dto.getUserId(), dto.getNume())) {
             throw new IllegalArgumentException("Există deja o rețetă cu acest nume");
+        }
+
+        // Verifică dacă lista de ingrediente nu e goală
+        if (dto.getIngrediente() == null || dto.getIngrediente().isEmpty()) {
+            throw new IllegalArgumentException("Rețeta trebuie să aibă cel puțin un ingredient");
         }
 
         // Verifică dacă toate ingredientele există
@@ -64,11 +69,12 @@ public class RetetaService {
             retetaIngredientRepository.save(ri);
         }
 
-        return savedReteta;
+        // 3. Returnează DTO-ul complet
+        return getRetetaCompleta(savedReteta.getId(), dto.getUserId());
     }
 
     @Transactional
-    public Reteta updateReteta(Long id, Integer userId, RetetaEditDto dto) {
+    public RetetaResponseDto updateReteta(Long id, Integer userId, RetetaEditDto dto) {
         Reteta existingReteta = retetaRepository.findByUserIdAndId(userId, id)
                 .orElseThrow(() -> new IllegalArgumentException("Rețeta nu a fost găsită"));
 
@@ -89,6 +95,11 @@ public class RetetaService {
 
         // Dacă s-au trimis ingrediente noi, actualizează
         if (dto.getIngrediente() != null) {
+            // Verifică dacă lista nu e goală
+            if (dto.getIngrediente().isEmpty()) {
+                throw new IllegalArgumentException("Rețeta trebuie să aibă cel puțin un ingredient");
+            }
+
             // Verifică dacă ingredientele există
             for (RetetaIngredientDto ingDto : dto.getIngrediente()) {
                 if (!ingredientRepository.existsById(ingDto.getIngredientId())) {
@@ -109,7 +120,7 @@ public class RetetaService {
             }
         }
 
-        return updatedReteta;
+        return getRetetaCompleta(id, userId);
     }
 
     @Transactional

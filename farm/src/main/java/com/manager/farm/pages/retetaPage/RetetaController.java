@@ -26,15 +26,12 @@ public class RetetaController {
     @PostMapping("/add")
     public ResponseEntity<?> addReteta(@Valid @RequestBody RetetaAddDto dto) {
         try {
-            retetaService.createReteta(dto);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(retetaService.getRetetaById(
-                            retetaService.getAllRetete(dto.getUserId()).get(0).getId(),
-                            dto.getUserId()));
+            RetetaResponseDto savedReteta = retetaService.createReteta(dto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedReteta);
         } catch (IllegalArgumentException e) {
             Map<String, String> error = new HashMap<>();
             error.put("error", e.getMessage());
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
         } catch (Exception e) {
             Map<String, String> error = new HashMap<>();
             error.put("error", "Eroare la salvare: " + e.getMessage());
@@ -62,12 +59,12 @@ public class RetetaController {
             @RequestParam Integer userId,
             @Valid @RequestBody RetetaEditDto dto) {
         try {
-            retetaService.updateReteta(id, userId, dto);
-            return ResponseEntity.ok(retetaService.getRetetaById(id, userId));
+            RetetaResponseDto updatedReteta = retetaService.updateReteta(id, userId, dto);
+            return ResponseEntity.ok(updatedReteta);
         } catch (IllegalArgumentException e) {
             Map<String, String> error = new HashMap<>();
             error.put("error", e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
         } catch (Exception e) {
             Map<String, String> error = new HashMap<>();
             error.put("error", "Eroare la actualizare: " + e.getMessage());

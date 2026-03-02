@@ -59,22 +59,26 @@ const TipEvenimentPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            // Convertește duration la număr (0 pentru string gol)
+            const durationValue = formData.duration === '' ? 0 : parseFloat(formData.duration);
+
+            const dataToSend = {
+                ...formData,
+                duration: durationValue
+            };
+
             if (editMode && currentTip) {
-                // UPDATE - trimitem doar câmpurile care se pot edita
+                // UPDATE
                 await axios.put(
                     `${API_URL}/tip-eveniment/update/${currentTip.id}?userId=1`,
                     {
                         nume: formData.nume,
-                        duration: parseInt(formData.duration)
+                        duration: durationValue
                     }
                 );
             } else {
-                // CREATE - trimitem tot, inclusiv userId
-                await axios.post(`${API_URL}/tip-eveniment/add`, {
-                    nume: formData.nume,
-                    duration: parseInt(formData.duration),
-                    userId: 1
-                });
+                // CREATE
+                await axios.post(`${API_URL}/tip-eveniment/add`, dataToSend);
             }
 
             fetchTipuri();
@@ -87,7 +91,7 @@ const TipEvenimentPage = () => {
             }
             console.error(err);
         }
-    };
+    };;
 
     const handleEdit = (tip) => {
         setFormData({
@@ -115,6 +119,19 @@ const TipEvenimentPage = () => {
                 alert('Eroare la ștergere!');
             }
             console.error(err);
+        }
+    };
+
+    // Funcție specială pentru a permite "0" la început
+    const handleDurationChange = (e) => {
+        const { value } = e.target;
+
+        // Permite șir gol, "0", "0.5", numere
+        if (value === '' || /^\d*\.?\d*$/.test(value)) {
+            setFormData({
+                ...formData,
+                duration: value
+            });
         }
     };
 
@@ -172,17 +189,18 @@ const TipEvenimentPage = () => {
                             />
                         </div>
 
+                        {/* În locul input-ului de tip number, folosește input text */}
                         <div className="form-group">
                             <label>Durată (zile):</label>
                             <input
-                                type="number"
+                                type="text"
                                 name="duration"
                                 value={formData.duration}
-                                onChange={handleInputChange}
-                                min="0"
-                                required
+                                onChange={handleDurationChange}
+                                placeholder="0 = eveniment instant"
+                                className="form-control"
                             />
-                            <small>0 = eveniment punctual</small>
+                            <small>0 = eveniment punctual (se termină în aceeași zi)</small>
                         </div>
 
                         <div className="form-actions">

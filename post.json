@@ -1,0 +1,369 @@
+{
+  "info": {
+    "name": "Farm Management - Bovine",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Colecție pentru testarea endpoint-urilor pentru bovine și greutate"
+  },
+  "item": [
+    {
+      "name": "1. Adaugă bovină nouă",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/bovine/add",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "bovine", "add"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": 1,\n  \"dateBirth\": \"2023-05-15\",\n  \"isMale\": false,\n  \"nrFatari\": 2,\n  \"productieLapte\": 25,\n  \"greutate\": 450,\n  \"nota\": \"Vacă sănătoasă, productivă\",\n  \"location\": \"Sector A - Stâna 3\",\n  \"isObserved\": false,\n  \"retetaId\": 1,\n  \"tipBovinaId\": 1\n}"
+        },
+        "description": "Adaugă o bovină nouă (vacă)"
+      },
+      "response": []
+    },
+    {
+      "name": "2. Adaugă taur nou",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/bovine/add",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "bovine", "add"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": 1,\n  \"dateBirth\": \"2022-08-10\",\n  \"isMale\": true,\n  \"nrFatari\": 0,\n  \"productieLapte\": null,\n  \"greutate\": 650,\n  \"nota\": \"Taur reproducător\",\n  \"location\": \"Sector B - Padoc 1\",\n  \"isObserved\": false,\n  \"retetaId\": 2,\n  \"tipBovinaId\": 2\n}"
+        },
+        "description": "Adaugă o bovină nouă (taur)"
+      },
+      "response": []
+    },
+    {
+      "name": "3. Adaugă vițel",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/bovine/add",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "bovine", "add"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": 1,\n  \"dateBirth\": \"2024-01-20\",\n  \"isMale\": true,\n  \"nrFatari\": 0,\n  \"productieLapte\": null,\n  \"greutate\": 120,\n  \"nota\": \"Vițel sănătos\",\n  \"location\": \"Sector C - Ișar\",\n  \"isObserved\": true,\n  \"retetaId\": null,\n  \"tipBovinaId\": 3\n}"
+        },
+        "description": "Adaugă o bovină nouă (vițel)"
+      },
+      "response": []
+    },
+    {
+      "name": "4. Toate bovinele",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/bovine/all?userId=1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "bovine", "all"],
+          "query": [
+            {
+              "key": "userId",
+              "value": "1"
+            }
+          ]
+        },
+        "description": "Listează toate bovinele pentru userul 1"
+      },
+      "response": []
+    },
+    {
+      "name": "5. Bovină după ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/bovine/1?userId=1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "bovine", "1"],
+          "query": [
+            {
+              "key": "userId",
+              "value": "1"
+            }
+          ]
+        },
+        "description": "Vizualizează o bovină specifică (înlocuiește ID-ul)"
+      },
+      "response": []
+    },
+    {
+      "name": "6. Editează bovină",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/bovine/update/1?userId=1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "bovine", "update", "1"],
+          "query": [
+            {
+              "key": "userId",
+              "value": "1"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nume\": null,\n  \"dateBirth\": \"2023-05-15\",\n  \"isMale\": false,\n  \"greutate\": 460,\n  \"nrFatari\": 2,\n  \"productieLapte\": 26,\n  \"nota\": \"Vacă sănătoasă - producție crescută\",\n  \"location\": \"Sector A - Stâna 3\",\n  \"isObserved\": false,\n  \"retetaId\": 1,\n  \"tipBovinaId\": 1\n}"
+        },
+        "description": "Editează o bovină existentă (include greutate nouă)"
+      },
+      "response": []
+    },
+    {
+      "name": "7. Filtrare după rasă",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/bovine/by-rasa/1?userId=1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "bovine", "by-rasa", "1"],
+          "query": [
+            {
+              "key": "userId",
+              "value": "1"
+            }
+          ]
+        },
+        "description": "Listează bovinele după rasă (tipBovinaId)"
+      },
+      "response": []
+    },
+    {
+      "name": "8. Filtrare după sex",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/bovine/by-sex?isMale=true&userId=1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "bovine", "by-sex"],
+          "query": [
+            {
+              "key": "isMale",
+              "value": "true"
+            },
+            {
+              "key": "userId",
+              "value": "1"
+            }
+          ]
+        },
+        "description": "Listează bovinele după sex (true = mascul, false = femelă)"
+      },
+      "response": []
+    },
+    {
+      "name": "9. Filtrare după rețetă",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/bovine/by-reteta/1?userId=1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "bovine", "by-reteta", "1"],
+          "query": [
+            {
+              "key": "userId",
+              "value": "1"
+            }
+          ]
+        },
+        "description": "Listează bovinele care urmează o anumită rețetă"
+      },
+      "response": []
+    },
+    {
+      "name": "10. Adaugă măsurătoare greutate",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/bovine/greutate/add",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "bovine", "greutate", "add"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"bovinaId\": 1,\n  \"greutate\": 465,\n  \"dataMasuratoare\": \"2024-02-15\",\n  \"nota\": \"Măsurătoare lunară\",\n  \"userId\": 1\n}"
+        },
+        "description": "Adaugă o nouă măsurătoare de greutate (actualizează automat greutatea curentă)"
+      },
+      "response": []
+    },
+    {
+      "name": "11. Adaugă a doua măsurătoare (test actualizare)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/bovine/greutate/add",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "bovine", "greutate", "add"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"bovinaId\": 1,\n  \"greutate\": 470,\n  \"dataMasuratoare\": \"2024-03-15\",\n  \"nota\": \"Creștere constantă\",\n  \"userId\": 1\n}"
+        },
+        "description": "Adaugă a doua măsurătoare - după asta, greutatea curentă ar trebui să fie 470"
+      },
+      "response": []
+    },
+    {
+      "name": "12. Istoric greutăți pentru o bovină",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/bovine/greutate/istoric/1?userId=1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "bovine", "greutate", "istoric", "1"],
+          "query": [
+            {
+              "key": "userId",
+              "value": "1"
+            }
+          ]
+        },
+        "description": "Vezi toate măsurătorile pentru o bovină (ordonate cronologic)"
+      },
+      "response": []
+    },
+    {
+      "name": "13. Ultima măsurătoare (greutatea curentă)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/bovine/greutate/ultima/1?userId=1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "bovine", "greutate", "ultima", "1"],
+          "query": [
+            {
+              "key": "userId",
+              "value": "1"
+            }
+          ]
+        },
+        "description": "Vezi ultima măsurătoare (greutatea curentă)"
+      },
+      "response": []
+    },
+    {
+      "name": "14. Verifică bovină după măsurători",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/bovine/1?userId=1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "bovine", "1"],
+          "query": [
+            {
+              "key": "userId",
+              "value": "1"
+            }
+          ]
+        },
+        "description": "Verifică dacă greutatea curentă s-a actualizat (ar trebui să fie 470)"
+      },
+      "response": []
+    },
+    {
+      "name": "15. Șterge o măsurătoare",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/bovine/greutate/delete/1?bovinaId=1&userId=1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "bovine", "greutate", "delete", "1"],
+          "query": [
+            {
+              "key": "bovinaId",
+              "value": "1"
+            },
+            {
+              "key": "userId",
+              "value": "1"
+            }
+          ]
+        },
+        "description": "Șterge o măsurătoare (înlocuiește ID-ul măsurătorii)"
+      },
+      "response": []
+    },
+    {
+      "name": "16. Șterge bovină",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/bovine/delete/1?userId=1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "bovine", "delete", "1"],
+          "query": [
+            {
+              "key": "userId",
+              "value": "1"
+            }
+          ]
+        },
+        "description": "Șterge o bovină (și toate măsurătorile asociate - cascade)"
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string",
+      "description": "URL-ul de bază al aplicației"
+    }
+  ]
+}

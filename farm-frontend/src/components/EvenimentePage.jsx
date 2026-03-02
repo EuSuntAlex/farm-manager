@@ -1,20 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useLocation } from 'react-router-dom';
 import './EvenimentePage.css';
 
 const API_URL = 'http://localhost:8080/api';
 
 const EvenimentePage = () => {
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const bovinaIdFromUrl = queryParams.get('bovinaId');
+    const addMode = queryParams.get('add') === 'true';
+
     const [evenimente, setEvenimente] = useState([]);
     const [tipuriEveniment, setTipuriEveniment] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [showAddForm, setShowAddForm] = useState(false);
+    const [showAddForm, setShowAddForm] = useState(addMode);
     const [editMode, setEditMode] = useState(false);
     const [currentEveniment, setCurrentEveniment] = useState(null);
     const [filter, setFilter] = useState('toate');
+    const [selectedBovina, setSelectedBovina] = useState(null);
 
-    // State pentru input-uri separate
+    // State pentru input-uri separate (dată și oră)
     const [day, setDay] = useState('');
     const [month, setMonth] = useState('');
     const [year, setYear] = useState('');
@@ -29,7 +36,12 @@ const EvenimentePage = () => {
 
     useEffect(() => {
         fetchTipuri();
-    }, []);
+
+        // Dacă avem bovinaId în URL, încărcăm datele bovinei
+        if (bovinaIdFromUrl) {
+            fetchBovinaInfo(bovinaIdFromUrl);
+        }
+    }, [bovinaIdFromUrl]);
 
     useEffect(() => {
         fetchEvenimente();
@@ -68,6 +80,21 @@ const EvenimentePage = () => {
         }
     };
 
+    const fetchBovinaInfo = async (id) => {
+        try {
+            const response = await axios.get(`${API_URL}/bovine/${id}?userId=1`);
+            setSelectedBovina(response.data);
+
+            // Precompletează titlul evenimentului
+            setFormData(prev => ({
+                ...prev,
+                title: `Eveniment - Bovină #${id}`
+            }));
+        } catch (err) {
+            console.error('Eroare la încărcarea bovinei:', err);
+        }
+    };
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -80,26 +107,17 @@ const EvenimentePage = () => {
     const setCurrentDateTime = () => {
         const now = new Date();
 
-        // Ajustează fusul orar (opțional - dacă e nevoie)
-        // now.setHours(now.getHours() + 2); // pentru fusul orar românesc
-
-        const currentDay = String(now.getDate()).padStart(2, '0');
-        const currentMonth = String(now.getMonth() + 1).padStart(2, '0');
-        const currentYear = now.getFullYear();
-        const currentHour = String(now.getHours()).padStart(2, '0');
-        const currentMinute = String(now.getMinutes()).padStart(2, '0');
-
-        setDay(currentDay);
-        setMonth(currentMonth);
-        setYear(currentYear);
-        setHour(currentHour);
-        setMinute(currentMinute);
+        setDay(String(now.getDate()).padStart(2, '0'));
+        setMonth(String(now.getMonth() + 1).padStart(2, '0'));
+        setYear(now.getFullYear());
+        setHour(String(now.getHours()).padStart(2, '0'));
+        setMinute(String(now.getMinutes()).padStart(2, '0'));
     };
 
     const resetForm = () => {
         setFormData({
             tipEvenimentId: '',
-            title: '',
+            title: bovinaIdFromUrl ? `Eveniment - Bovină #${bovinaIdFromUrl}` : '',
             userId: 1
         });
         setDay('');
@@ -110,43 +128,61 @@ const EvenimentePage = () => {
         setEditMode(false);
         setCurrentEveniment(null);
         setShowAddForm(false);
+
+        // Dacă avem bovinaId, după reset redirecționăm înapoi
+        if (bovinaIdFromUrl) {
+            setTimeout(() => {
+                window.location.href = '/bovine';
+            }, 100);
+        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Validare - asigură-te că toate câmpurile sunt completate
+        // Validează data
         if (!day || !month || !year || !hour || !minute) {
             alert('Te rog completează data și ora complet!');
             return;
         }
 
-        // Combină data și ora în formatul cerut de backend (YYYY-MM-DDTHH:MM:00)
         const dateTimeStr = `${year}-${month}-${day}T${hour}:${minute}:00`;
 
         try {
+            const dataToSend = {
+                tipEvenimentId: parseInt(formData.tipEvenimentId),
+                title: formData.title,
+                dateStart: dateTimeStr,
+                userId: 1
+            };
+
+            // Adaugă bovinaId dacă există în URL
+            if (bovinaIdFromUrl) {
+                dataToSend.bovinaId = parseInt(bovinaIdFromUrl);
+            }
+
             if (editMode && currentEveniment) {
                 // UPDATE
                 await axios.put(
                     `${API_URL}/eveniment/update/${currentEveniment.id}?userId=1`,
-                    {
-                        title: formData.title,
-                        dateStart: dateTimeStr,
-                        tipEvenimentId: parseInt(formData.tipEvenimentId)
-                    }
+                    dataToSend
                 );
             } else {
-                // CREATE
-                await axios.post(`${API_URL}/eveniment/add`, {
-                    tipEvenimentId: parseInt(formData.tipEvenimentId),
-                    title: formData.title,
-                    dateStart: dateTimeStr,
-                    userId: 1
-                });
+                // CREATE - fără duration, vine din tipEveniment în backend
+                await axios.post(`${API_URL}/eveniment/add`, dataToSend);
             }
 
             fetchEvenimente();
-            resetForm();
+
+            // Dacă am venit de la bovine, după salvare ne întoarcem
+            if (bovinaIdFromUrl) {
+                alert('Eveniment adăugat cu succes!');
+                setTimeout(() => {
+                    window.location.href = '/bovine';
+                }, 1500);
+            } else {
+                resetForm();
+            }
         } catch (err) {
             alert('Eroare la salvare!');
             console.error(err);
@@ -154,16 +190,18 @@ const EvenimentePage = () => {
     };
 
     const handleEdit = (eveniment) => {
-        // Desparte data și ora din string-ul primit de la backend
-        const [data, oraFull] = eveniment.dateStart.split('T');
-        const [an, luna, zi] = data.split('-');
-        const [ore, minute] = oraFull.split(':');
+        // Desparte data și ora
+        if (eveniment.dateStart) {
+            const [data, oraFull] = eveniment.dateStart.split('T');
+            const [an, luna, zi] = data.split('-');
+            const [ore, minute] = oraFull.split(':');
 
-        setYear(an);
-        setMonth(luna);
-        setDay(zi);
-        setHour(ore);
-        setMinute(minute);
+            setYear(an);
+            setMonth(luna);
+            setDay(zi);
+            setHour(ore);
+            setMinute(minute);
+        }
 
         setFormData({
             tipEvenimentId: eveniment.tipEvenimentId,
@@ -202,13 +240,11 @@ const EvenimentePage = () => {
         if (!dateStr) return '-';
 
         try {
-            // Dacă e string în format ISO (ex: "2026-02-26T10:30:00")
             if (dateStr.includes('T')) {
                 const [data, ora] = dateStr.split('T');
                 const [an, luna, zi] = data.split('-');
                 const [ore, minute] = ora.split(':');
 
-                // Format: DD/MM/YYYY HH:MM
                 return `${zi}/${luna}/${an} ${ore}:${minute}`;
             }
             return dateStr;
@@ -226,38 +262,49 @@ const EvenimentePage = () => {
                 <h1>Evenimente</h1>
                 <button
                     className="btn-primary"
-                    onClick={() => setShowAddForm(!showAddForm)}
+                    onClick={() => {
+                        setEditMode(false);
+                        setCurrentEveniment(null);
+                        setShowAddForm(!showAddForm);
+                        // Dacă închidem formularul și avem bovinaId, ne întoarcem
+                        if (!showAddForm && bovinaIdFromUrl) {
+                            window.location.href = '/bovine';
+                        }
+                    }}
                 >
                     {showAddForm ? 'Anulează' : '+ Adaugă Eveniment'}
                 </button>
             </div>
 
-            <div className="filters">
-                <button
-                    className={`filter-btn ${filter === 'toate' ? 'active' : ''}`}
-                    onClick={() => setFilter('toate')}
-                >
-                    Toate
-                </button>
-                <button
-                    className={`filter-btn ${filter === 'viitoare' ? 'active' : ''}`}
-                    onClick={() => setFilter('viitoare')}
-                >
-                    Viitoare
-                </button>
-                <button
-                    className={`filter-btn ${filter === 'desfasurare' ? 'active' : ''}`}
-                    onClick={() => setFilter('desfasurare')}
-                >
-                    În Desfășurare
-                </button>
-                <button
-                    className={`filter-btn ${filter === 'trecute' ? 'active' : ''}`}
-                    onClick={() => setFilter('trecute')}
-                >
-                    Ultimele 30 zile
-                </button>
-            </div>
+            {/* Filtre */}
+            {!bovinaIdFromUrl && (
+                <div className="filters">
+                    <button
+                        className={`filter-btn ${filter === 'toate' ? 'active' : ''}`}
+                        onClick={() => setFilter('toate')}
+                    >
+                        Toate
+                    </button>
+                    <button
+                        className={`filter-btn ${filter === 'viitoare' ? 'active' : ''}`}
+                        onClick={() => setFilter('viitoare')}
+                    >
+                        Viitoare
+                    </button>
+                    <button
+                        className={`filter-btn ${filter === 'desfasurare' ? 'active' : ''}`}
+                        onClick={() => setFilter('desfasurare')}
+                    >
+                        În Desfășurare
+                    </button>
+                    <button
+                        className={`filter-btn ${filter === 'trecute' ? 'active' : ''}`}
+                        onClick={() => setFilter('trecute')}
+                    >
+                        Ultimele 30 zile
+                    </button>
+                </div>
+            )}
 
             {error && <div className="error-message">{error}</div>}
 
@@ -265,28 +312,23 @@ const EvenimentePage = () => {
                 <div className="form-container">
                     <h2>{editMode ? 'Editează Eveniment' : 'Adaugă Eveniment Nou'}</h2>
 
-                    {/* Butonul Astăzi */}
+                    {/* Buton Astăzi */}
                     <div style={{ marginBottom: '20px', textAlign: 'right' }}>
                         <button
                             type="button"
                             onClick={setCurrentDateTime}
-                            style={{
-                                backgroundColor: '#2196F3',
-                                color: 'white',
-                                border: 'none',
-                                padding: '8px 16px',
-                                borderRadius: '4px',
-                                cursor: 'pointer',
-                                fontSize: '14px',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: '5px'
-                            }}
+                            className="btn-today"
                         >
-                            <span>📅</span>
-                            Astăzi (data și ora curentă)
+                            📅 Astăzi
                         </button>
                     </div>
+
+                    {/* Mesaj informativ dacă evenimentul e pentru o bovină */}
+                    {bovinaIdFromUrl && (
+                        <div className="info-message">
+                            <p>📌 Adaugi eveniment pentru: <strong>Bovină #{bovinaIdFromUrl}</strong></p>
+                        </div>
+                    )}
 
                     <form onSubmit={handleSubmit}>
                         <div className="form-group">
@@ -300,7 +342,7 @@ const EvenimentePage = () => {
                                 <option value="">Selectează tip</option>
                                 {tipuriEveniment.map((tip) => (
                                     <option key={tip.id} value={tip.id}>
-                                        {tip.nume} ({tip.duration === 0 ? 'punctual' : `${tip.duration} zile`})
+                                        {tip.nume} ({tip.duration === 0 ? 'instant' : `${tip.duration} zile`})
                                     </option>
                                 ))}
                             </select>
@@ -317,15 +359,15 @@ const EvenimentePage = () => {
                             />
                         </div>
 
-                        {/* Data - select-uri separate pentru control total */}
+                        {/* Data - select-uri separate */}
                         <div className="form-group">
                             <label>Data Început (ZZ/LL/AAAA):</label>
-                            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                            <div className="date-selects">
                                 <select
                                     value={day}
                                     onChange={(e) => setDay(e.target.value)}
                                     required
-                                    style={{ flex: 1, minWidth: '70px' }}
+                                    className="date-select"
                                 >
                                     <option value="">Zi</option>
                                     {[...Array(31)].map((_, i) => {
@@ -342,7 +384,7 @@ const EvenimentePage = () => {
                                     value={month}
                                     onChange={(e) => setMonth(e.target.value)}
                                     required
-                                    style={{ flex: 1, minWidth: '90px' }}
+                                    className="date-select"
                                 >
                                     <option value="">Lună</option>
                                     <option value="01">Ianuarie (01)</option>
@@ -363,11 +405,11 @@ const EvenimentePage = () => {
                                     value={year}
                                     onChange={(e) => setYear(e.target.value)}
                                     required
-                                    style={{ flex: 1, minWidth: '80px' }}
+                                    className="date-select"
                                 >
                                     <option value="">An</option>
-                                    {[...Array(10)].map((_, i) => {
-                                        const an = 2026 + i;
+                                    {[...Array(21)].map((_, i) => {
+                                        const an = 2010 + i;
                                         return (
                                             <option key={an} value={an}>
                                                 {an}
@@ -378,15 +420,15 @@ const EvenimentePage = () => {
                             </div>
                         </div>
 
-                        {/* Ora - select-uri separate pentru format 24h */}
+                        {/* Ora - select-uri separate */}
                         <div className="form-group">
                             <label>Ora Început (HH:MM - format 24h):</label>
-                            <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+                            <div className="time-selects">
                                 <select
                                     value={hour}
                                     onChange={(e) => setHour(e.target.value)}
                                     required
-                                    style={{ flex: 1, minWidth: '70px' }}
+                                    className="time-select"
                                 >
                                     <option value="">Ora</option>
                                     {[...Array(24)].map((_, i) => {
@@ -398,12 +440,12 @@ const EvenimentePage = () => {
                                         );
                                     })}
                                 </select>
-                                <span style={{ fontSize: '1.2em', fontWeight: 'bold' }}>:</span>
+                                <span className="time-separator">:</span>
                                 <select
                                     value={minute}
                                     onChange={(e) => setMinute(e.target.value)}
                                     required
-                                    style={{ flex: 1, minWidth: '70px' }}
+                                    className="time-select"
                                 >
                                     <option value="">Min</option>
                                     {[...Array(60)].map((_, i) => {
@@ -416,72 +458,79 @@ const EvenimentePage = () => {
                                     })}
                                 </select>
                             </div>
-                            <small>Ora în format 24h (ex: 13 pentru 1 PM, 08 pentru 8 AM)</small>
                         </div>
+
+                        {/* Câmp ascuns pentru bovinaId */}
+                        {bovinaIdFromUrl && (
+                            <input type="hidden" name="bovinaId" value={bovinaIdFromUrl} />
+                        )}
 
                         <div className="form-actions">
                             <button type="submit" className="btn-success">
                                 {editMode ? 'Actualizează' : 'Salvează'}
                             </button>
                             <button type="button" className="btn-secondary" onClick={resetForm}>
-                                Reset
+                                Anulează
                             </button>
                         </div>
                     </form>
                 </div>
             )}
 
-            <div className="table-container">
-                <table className="data-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Tip</th>
-                            <th>Titlu</th>
-                            <th>Început</th>
-                            <th>Sfârșit</th>
-                            <th>Status</th>
-                            <th>Zile Rămase</th>
-                            <th>Acțiuni</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {evenimente.length === 0 ? (
+            {/* Tabel evenimente - ascundem tabelul dacă suntem în modul adăugare pentru o bovină */}
+            {!bovinaIdFromUrl && (
+                <div className="table-container">
+                    <table className="data-table">
+                        <thead>
                             <tr>
-                                <td colSpan="8" className="no-data">
-                                    Nu există evenimente.
-                                </td>
+                                <th>ID</th>
+                                <th>Tip</th>
+                                <th>Titlu</th>
+                                <th>Început</th>
+                                <th>Sfârșit</th>
+                                <th>Status</th>
+                                <th>Zile Rămase</th>
+                                <th>Acțiuni</th>
                             </tr>
-                        ) : (
-                            evenimente.map((ev) => (
-                                <tr key={ev.id}>
-                                    <td>{ev.id}</td>
-                                    <td>{ev.tipEvenimentNume || ev.tipEvenimentId}</td>
-                                    <td>{ev.title}</td>
-                                    <td>{formatDate(ev.dateStart)}</td>
-                                    <td>{ev.dateEnd ? formatDate(ev.dateEnd) : '-'}</td>
-                                    <td>{getStatusBadge(ev.status)}</td>
-                                    <td>{ev.zileRamase > 0 ? ev.zileRamase : '-'}</td>
-                                    <td className="actions">
-                                        <button
-                                            className="btn-edit"
-                                            onClick={() => handleEdit(ev)}
-                                        >
-                                            Editează
-                                        </button>
-                                        <button
-                                            className="btn-delete"
-                                            onClick={() => handleDelete(ev.id)}
-                                        >
-                                            Șterge
-                                        </button>
+                        </thead>
+                        <tbody>
+                            {evenimente.length === 0 ? (
+                                <tr>
+                                    <td colSpan="8" className="no-data">
+                                        Nu există evenimente.
                                     </td>
                                 </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
-            </div>
+                            ) : (
+                                evenimente.map((ev) => (
+                                    <tr key={ev.id}>
+                                        <td>{ev.id}</td>
+                                        <td>{ev.tipEvenimentNume || ev.tipEvenimentId}</td>
+                                        <td>{ev.title}</td>
+                                        <td>{formatDate(ev.dateStart)}</td>
+                                        <td>{ev.dateEnd ? formatDate(ev.dateEnd) : '-'}</td>
+                                        <td>{getStatusBadge(ev.status)}</td>
+                                        <td>{ev.zileRamase > 0 ? ev.zileRamase : '-'}</td>
+                                        <td className="actions">
+                                            <button
+                                                className="btn-edit"
+                                                onClick={() => handleEdit(ev)}
+                                            >
+                                                Editează
+                                            </button>
+                                            <button
+                                                className="btn-delete"
+                                                onClick={() => handleDelete(ev.id)}
+                                            >
+                                                Șterge
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            )}
         </div>
     );
 };
